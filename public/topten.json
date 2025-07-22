@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Boom Festival",
+    "city": "Idanha-a-Nova",
+    "country": "Portugal",
+    "startDate": "2025-07-17",
+    "endDate": "2025-07-24",
+    "lat": 39.5487,
+    "lon": -7.9321,
+    "visitors": 40000,
+    "shape": "star"
+  },
+  {
+    "name": "Ozora Festival",
+    "city": "D\u00e1dpuszta",
+    "country": "Hungary",
+    "startDate": "2025-07-25",
+    "endDate": "2025-08-05",
+    "lat": 46.8452,
+    "lon": 18.3912,
+    "visitors": 30000,
+    "shape": "star"
+  },
+  {
+    "name": "Mo:Dem Festival",
+    "city": "Primslje",
+    "country": "Croatia",
+    "startDate": "2025-08-04",
+    "endDate": "2025-08-10",
+    "lat": 44.7794,
+    "lon": 15.7378,
+    "visitors": 8000,
+    "shape": "triangle"
+  },
+  {
+    "name": "Shankra Festival",
+    "city": "Lostallo",
+    "country": "Switzerland",
+    "startDate": "2025-07-10",
+    "endDate": "2025-07-15",
+    "lat": 46.3139,
+    "lon": 9.1993,
+    "visitors": 15000,
+    "shape": "star"
+  },
+  {
+    "name": "Indian Spirit Festival",
+    "city": "L\u00fcbz",
+    "country": "Germany",
+    "startDate": "2025-08-28",
+    "endDate": "2025-09-01",
+    "lat": 53.4594,
+    "lon": 12.0272,
+    "visitors": 20000,
+    "shape": "star"
+  },
+  {
+    "name": "Universo Paralello",
+    "city": "Pratigi",
+    "country": "Brazil",
+    "startDate": "2025-12-27",
+    "endDate": "2026-01-03",
+    "lat": -13.5841,
+    "lon": -39.0938,
+    "visitors": 15000,
+    "shape": "star"
+  },
+  {
+    "name": "Burning Mountain",
+    "city": "Zernez",
+    "country": "Switzerland",
+    "startDate": "2025-06-26",
+    "endDate": "2025-06-29",
+    "lat": 46.6972,
+    "lon": 10.0908,
+    "visitors": 4000,
+    "shape": "triangle"
+  },
+  {
+    "name": "Origin Festival",
+    "city": "Cape Town",
+    "country": "South Africa",
+    "startDate": "2025-01-27",
+    "endDate": "2025-01-31",
+    "lat": -33.9249,
+    "lon": 18.4241,
+    "visitors": 9000,
+    "shape": "triangle"
+  },
+  {
+    "name": "Hill Top Festival",
+    "city": "Vagator",
+    "country": "India",
+    "startDate": "2025-02-10",
+    "endDate": "2025-02-14",
+    "lat": 15.5895,
+    "lon": 73.7413,
+    "visitors": 5000,
+    "shape": "triangle"
+  },
+  {
+    "name": "Rainbow Serpent",
+    "city": "Lexton",
+    "country": "Australia",
+    "startDate": "2025-01-24",
+    "endDate": "2025-01-27",
+    "lat": -37.3876,
+    "lon": 143.2312,
+    "visitors": 10000,
+    "shape": "star"
+  }
+]
