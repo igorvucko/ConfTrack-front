@@ -58,25 +58,25 @@ export default function FestivalMapPage() {
 
     svg.call(zoom as any)
 
-d3.json('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson')
+    d3.json('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson')
       .then((geojson: any) => {
         d3.json<Festival[]>('/data/topten.json').then((data) => {
           if (!data) return
 
           const countryCount: Record<string, number> = {}
           data.forEach((d) => {
-const country = d.country
+            const country = d.country
             countryCount[country] = (countryCount[country] || 0) + 1
           })
 
-geojson.features = geojson.features.filter((d: any) => d.properties.name !== 'Antarctica')
+          geojson.features = geojson.features.filter((d: any) => d.properties.name !== 'Antarctica')
 
           mapLayer.selectAll('path')
             .data(geojson.features)
             .join('path')
             .attr('d', path as any)
             .attr('fill', (d: any) => {
-const count = countryCount[d.properties.name]
+              const count = countryCount[d.properties.name]
               return count ? color(Math.min(count, 10)) : '#eee'
             })
             .attr('stroke', '#999')
@@ -85,8 +85,8 @@ const count = countryCount[d.properties.name]
             .data(data)
             .join('circle')
             .attr('class', 'festival')
-.attr('cx', (d) => projection([d.lon, d.lat])?.[0] ?? 0)
-.attr('cy', (d) => projection([d.lon, d.lat])?.[1] ?? 0)
+            .attr('cx', (d) => projection([d.lon, d.lat])?.[0] ?? 0)
+            .attr('cy', (d) => projection([d.lon, d.lat])?.[1] ?? 0)
             .attr('r', (d) => {
               const start = new Date(d.startDate)
               const end = new Date(d.endDate)
@@ -102,18 +102,18 @@ const count = countryCount[d.properties.name]
               tooltip.transition().duration(200).style('opacity', '1')
               tooltip
                 .html(
-                `${d.name}
-                ${d.city}, ${d.country}<br/>👥 ${d.visitors.toLocaleString()}
-                posjetitelja<br/>⏱ ${d.startDate} – ${d.endDate}`
+                  `<strong>${d.name}</strong><br/>${d.city}, ${d.country}<br/>👥 ${d.visitors.toLocaleString()} posjetitelja<br/>⏱ ${d.startDate} – ${d.endDate}`
                 )
-                .style('left', event.pageX + 10 + 'px')
-                .style('top', event.pageY - 40 + 'px')
-                .style('background-color', '#1f1f2e')
-                .style('color', '#fff')
+                .style('left', `${event.pageX + 10}px`)
+                .style('top', `${event.pageY - 40}px`)
             })
             .on('mouseout', function () {
               d3.select(this).attr('fill', '#f3b400')
               tooltip.transition().duration(300).style('opacity', '0')
+            })
+            .on('click', function (event, d) {
+              const slug = d.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+              window.location.href = `/festivali/${slug}`
             })
 
           const canvas = d3.select(legendRef.current)

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import festivals from '@/../public/data/topten.json'
 import FestivalClientInfo from '@/components/ClientInfo'
-import CountryMap from '@/components/CountryMap'
+
 import FestivalLeafletMap from '@/components/FestivalLeafLetMap'
 
 

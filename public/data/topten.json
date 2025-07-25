@@ -11,16 +11,42 @@
     "shape": "star"
   },
   {
-    "name": "Ozora Festival",
-    "city": "D\u00e1dpuszta",
-    "country": "Hungary",
-    "startDate": "2025-07-25",
-    "endDate": "2025-08-05",
-    "lat": 46.8452,
-    "lon": 18.3912,
-    "visitors": 30000,
-    "shape": "star"
-  },
+
+  "name": "Ozora Festival",
+  "slug": "ozora-festival",
+  "city": "Dádpuszta",
+  "country": "Hungary",
+  "startDate": "2025-07-25",
+  "endDate": "2025-08-05",
+  "lat": 46.8452,
+  "lon": 18.3912,
+  "visitors": 30000,
+  "shape": "star",
+  "buyLink": "https://ozorafestival.eu/tickets",
+  "faq": [
+    {
+      "q": "Je li kampiranje uključeno?",
+      "a": "Da, kampiranje je uključeno u cijenu ulaznice."
+    },
+    {
+      "q": "Mogu li ponijeti vlastitu hranu?",
+      "a": "Da, ali staklene boce nisu dozvoljene."
+    }
+  ],
+  "reviews": [
+    {
+      "user": "Maja",
+      "rating": 5,
+      "comment": "Najbolje festivalsko iskustvo ikad!"
+    },
+    {
+      "user": "Ivan",
+      "rating": 4,
+      "comment": "Glazba i atmosfera su nevjerojatni!"
+    }
+  ]
+},
+
   {
     "name": "Mo:Dem Festival",
     "city": "Primslje",
