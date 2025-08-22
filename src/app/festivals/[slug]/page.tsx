@@ -4,6 +4,7 @@ import festivals from '@/../public/data/topten.json'
 import FestivalClientInfo from '@/components/ClientInfo'
 
 import FestivalLeafletMap from '@/components/FestivalLeafLetMap'
+import ProtectedRoute from '@/components/ProtectedRoute'
 
 
 function slugify(name: string) {
@@ -24,6 +25,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const imagePath = `/img/${params.slug}.jpg`
 
   return (
+
     <div className="bg-white text-gray-900 text-center">
       <div className="relative w-full aspect-[3/1] ">
   <Image

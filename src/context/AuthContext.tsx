@@ -1,65 +1,37 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
-import Cookies from "js-cookie";
-import { authApi } from "../api/authApi";
 
-type User = { id: number; email: string; name?: string };
+import { createContext, useContext, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
-type AuthContextType = {
-  user: User | null;
-  token: string | null;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name?: string) => Promise<void>;
-  logout: () => void;
-};
+interface AuthContextType {
+  status: "loading" | "authenticated" | "unauthenticated";
+  user: any;
+}
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({
+  status: "loading",
+  user: null,
+});
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
+export default function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const savedToken = Cookies.get("token");
-    const savedUser = Cookies.get("user");
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
+    if (session?.user) {
+      setUser(session.user as any);
+    } else {
+      setUser(null);
     }
-  }, []);
-
-  const login = async (email: string, password: string) => {
-    const data = await authApi.login(email, password);
-    Cookies.set("token", data.token);
-    Cookies.set("user", JSON.stringify(data.user));
-    setToken(data.token);
-    setUser(data.user);
-  };
-
-  const register = async (email: string, password: string, name?: string) => {
-    const data = await authApi.register(email, password, name);
-    Cookies.set("token", data.token);
-    Cookies.set("user", JSON.stringify(data.user));
-    setToken(data.token);
-    setUser(data.user);
-  };
-
-  const logout = () => {
-    Cookies.remove("token");
-    Cookies.remove("user");
-    setToken(null);
-    setUser(null);
-  };
+  }, [session]);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout }}>
+    <AuthContext.Provider value={{ status, user }}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
-  return context;
-};
+}
