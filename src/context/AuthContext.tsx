@@ -5,7 +5,11 @@ import { useSession } from "next-auth/react";
 
 interface AuthContextType {
   status: "loading" | "authenticated" | "unauthenticated";
-  user: any;
+  user: {
+    id: string;
+    email: string;
+    name?: string;
+  } | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -19,11 +23,15 @@ export function useAuth() {
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<AuthContextType["user"]>(null);
 
   useEffect(() => {
     if (session?.user) {
-      setUser(session.user as any);
+      setUser({
+        id: session.user.id,
+        email: session.user.email,
+        name: session.user.name || undefined,
+      });
     } else {
       setUser(null);
     }
