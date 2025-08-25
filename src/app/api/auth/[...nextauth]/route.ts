@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { NextResponse } from "next/server";
 
 const handler = NextAuth({
   providers: [
@@ -16,7 +15,6 @@ const handler = NextAuth({
         }
 
         try {
-
           const res = await fetch("http://localhost:3001/auth/login", {
             method: "POST",
             headers: {
@@ -28,11 +26,15 @@ const handler = NextAuth({
             }),
           });
 
+          if (!res.ok) {
+            return null;
+          }
+
           const user = await res.json();
 
-          if (res.ok && user) {
+          if (user) {
             return {
-              id: user.id,
+              id: user.id.toString(),
               email: user.email,
               name: user.name,
             };
