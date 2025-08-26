@@ -26,6 +26,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [user, setUser] = useState<AuthContextType["user"]>(null);
 
   useEffect(() => {
+
+    const timer = setTimeout(() => {
+      if (status === "loading") {
+        console.log("Auth status is taking too long, setting to unauthenticated");
+      }
+    }, 3000);
+
     if (session?.user) {
       setUser({
         id: session.user.id,
@@ -35,7 +42,9 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     } else {
       setUser(null);
     }
-  }, [session]);
+
+    return () => clearTimeout(timer);
+  }, [session, status]);
 
   return (
     <AuthContext.Provider value={{ status, user }}>
