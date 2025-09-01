@@ -35,28 +35,22 @@ export default function RegisterPage() {
       body: JSON.stringify(formData),
     });
 
+    const data = await response.json();
 
     if (!response.ok) {
-
-      const errorText = await response.text();
-      try {
-        const errorData = JSON.parse(errorText);
-        throw new Error(errorData.message || 'Registration failed');
-      } catch {
-        throw new Error(errorText || 'Registration failed');
-      }
+      throw new Error(data.message || 'Registration failed');
     }
 
-    const data = await response.json();
-    alert('Registration successful! Please check your email to verify your account.');
+
+    alert(data.message || 'Registration successful! Please check your email to verify your account.');
     router.push('/login');
   } catch (err: any) {
-    console.error('Registration error:', err);
     setError(err.message || 'Registration error: Internal server error');
   } finally {
     setIsLoading(false);
   }
 };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
