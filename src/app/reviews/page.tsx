@@ -1,17 +1,18 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import ReviewList from "@/components/reviews/ReviewList";
 import ConferenceSearch from "@/components/reviews/ConferenceSearch";
 import ReviewForm from "@/components/reviews/ReviewForm";
+import ReviewList from "@/components/reviews/ReviewList";
 
 export default function ReviewsPage() {
-  const {  status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [selectedConference, setSelectedConference] = useState<any>(null);
   const [showForm, setShowForm] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -33,7 +34,7 @@ export default function ReviewsPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Conference Reviews</h1>
           <p className="text-gray-400">Share your experience and read reviews from other attendees</p>
@@ -54,13 +55,16 @@ export default function ReviewsPage() {
           <div className="space-y-6">
             <div className="bg-gray-800 rounded-lg p-6">
               <div className="flex justify-between items-center mb-4">
-                <div>
+                <div className="flex-1">
                   <h2 className="text-xl font-semibold text-white">{selectedConference.name}</h2>
                   <p className="text-gray-400">{selectedConference.location}</p>
                   <p className="text-sm text-gray-500">
                     {new Date(selectedConference.startDate).toLocaleDateString()} -{" "}
                     {new Date(selectedConference.endDate).toLocaleDateString()}
                   </p>
+                  {selectedConference.description && (
+                    <p className="text-gray-300 text-sm mt-2">{selectedConference.description}</p>
+                  )}
                 </div>
                 <div className="flex gap-4">
                   <button
@@ -73,7 +77,7 @@ export default function ReviewsPage() {
                     onClick={() => setSelectedConference(null)}
                     className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors"
                   >
-                    Choose Different Conference
+                    Back to Search
                   </button>
                 </div>
               </div>

@@ -27,16 +27,32 @@ const handler = NextAuth({
           });
 
           if (!res.ok) {
+            console.error('Login failed:', res.status, res.statusText);
             return null;
           }
 
-          const user = await res.json();
+          const data = await res.json();
 
-          if (user) {
+
+          let userData;
+          if (data.user) {
+
+            userData = data.user;
+          } else if (data.id || data.email) {
+
+            userData = data;
+          } else {
+            console.error('Unexpected response structure:', data);
+            return null;
+          }
+
+          if (userData) {
             return {
-              id: user.id.toString(),
-              email: user.email,
-              name: user.name,
+              id: userData.id?.toString(),
+              email: userData.email,
+              name: userData.name,
+
+              accessToken: data.accessToken,
             };
           }
           return null;
@@ -60,6 +76,7 @@ const handler = NextAuth({
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        token.accessToken = user.accessToken;
       }
       return token;
     },
@@ -67,6 +84,7 @@ const handler = NextAuth({
       if (session.user) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
+        session.accessToken = token.accessToken as string;
       }
       return session;
     },
