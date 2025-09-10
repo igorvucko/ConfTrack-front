@@ -24,6 +24,7 @@ interface ReviewListProps {
 export default function ReviewList({ conferenceId, refreshKey }: ReviewListProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchReviews();
@@ -31,12 +32,24 @@ export default function ReviewList({ conferenceId, refreshKey }: ReviewListProps
 
   const fetchReviews = async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const response = await fetch(`/api/reviews?conferenceId=${conferenceId}`);
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError("Reviews API endpoint not found");
+        } else {
+          setError(`Failed to fetch reviews: ${response.status} ${response.statusText}`);
+        }
+        return;
+      }
+
       const data = await response.json();
       setReviews(data);
     } catch (error) {
       console.error("Error fetching reviews:", error);
+      setError("Failed to load reviews. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -46,6 +59,23 @@ export default function ReviewList({ conferenceId, refreshKey }: ReviewListProps
     return (
       <div className="bg-gray-800 rounded-lg p-6">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-gray-800 rounded-lg p-6">
+        <h2 className="text-xl font-semibold text-white mb-4">Reviews</h2>
+        <div className="text-red-400 p-4 bg-red-900/20 rounded-lg">
+          <p>{error}</p>
+          <button
+            onClick={fetchReviews}
+            className="mt-2 bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
@@ -63,10 +93,10 @@ export default function ReviewList({ conferenceId, refreshKey }: ReviewListProps
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
-                    {review.user.name?.charAt(0).toUpperCase() || review.user.email?.charAt(0).toUpperCase()}
+                    {review.user.name?.charAt(0).toUpperCase() || review.user.email?.charAt(0).toUpperCase() || "U"}
                   </div>
                   <span className="text-white font-medium">
-                    {review.user.name || review.user.email}
+                    {review.user.name || review.user.email || "Unknown User"}
                   </span>
                 </div>
                 <div className="flex items-center space-x-1">

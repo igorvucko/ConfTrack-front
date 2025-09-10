@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface Conference {
   id: number;
@@ -17,6 +18,7 @@ export default function ReviewForm({ conference, onCancel, onSuccess }: ReviewFo
   const [rating, setRating] = useState(5);
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: session } = useSession();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,14 +37,16 @@ export default function ReviewForm({ conference, onCancel, onSuccess }: ReviewFo
         }),
       });
 
+      const responseData = await response.json();
+
       if (response.ok) {
         onSuccess();
       } else {
-        throw new Error("Failed to submit review");
+        throw new Error(responseData.error || "Failed to submit review");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting review:", error);
-      alert("Failed to submit review. Please try again.");
+      alert(error.message || "Failed to submit review. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

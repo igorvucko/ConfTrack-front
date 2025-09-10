@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import ConferenceSearch from "@/components/reviews/ConferenceSearch";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import ReviewList from "@/components/reviews/ReviewList";
@@ -34,6 +35,23 @@ export default function ReviewsPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
+      {/* Breadcrumb Navigation */}
+      <div className="bg-gray-800 py-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="flex space-x-2 text-sm">
+            <Link href="/" className="text-gray-400 hover:text-white transition-colors">
+              Home
+            </Link>
+            <span className="text-gray-600">/</span>
+            <Link href="/conferences" className="text-gray-400 hover:text-white transition-colors">
+              Conferences
+            </Link>
+            <span className="text-gray-600">/</span>
+            <span className="text-white">Reviews</span>
+          </nav>
+        </div>
+      </div>
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Conference Reviews</h1>
