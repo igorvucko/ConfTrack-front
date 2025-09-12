@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 interface Review {
   id: number;
@@ -9,11 +10,12 @@ interface Review {
   createdAt: string;
   user: {
     id: number;
-    name: string;
+    name: string | null;
     email: string;
   };
-  likes: any[];
-  comments: any[];
+  likes: number;
+  comments: number;
+  userLiked: boolean;
 }
 
 interface ReviewListProps {
@@ -24,7 +26,7 @@ interface ReviewListProps {
 export default function ReviewList({ conferenceId, refreshKey }: ReviewListProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   useEffect(() => {
     fetchReviews();
@@ -32,26 +34,55 @@ export default function ReviewList({ conferenceId, refreshKey }: ReviewListProps
 
   const fetchReviews = async () => {
     setIsLoading(true);
-    setError(null);
     try {
       const response = await fetch(`/api/reviews?conferenceId=${conferenceId}`);
-
       if (!response.ok) {
-        if (response.status === 404) {
-          setError("Reviews API endpoint not found");
-        } else {
-          setError(`Failed to fetch reviews: ${response.status} ${response.statusText}`);
-        }
-        return;
+        throw new Error('Failed to fetch reviews');
       }
-
-      const data = await response.json();
+      const data: Review[] = await response.json();
       setReviews(data);
     } catch (error) {
       console.error("Error fetching reviews:", error);
-      setError("Failed to load reviews. Please try again later.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleLike = async (reviewId: number) => {
+    if (!session) {
+      alert("Please sign in to like reviews");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/reviews/${reviewId}/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+
+        // Update the specific review with new like count and userLiked status
+        setReviews(prevReviews =>
+          prevReviews.map(review =>
+            review.id === reviewId
+              ? {
+                  ...review,
+                  likes: result.likes,
+                  userLiked: result.userLiked
+                }
+              : review
+          )
+        );
+      } else {
+        throw new Error("Failed to like review");
+      }
+    } catch (error) {
+      console.error("Error liking review:", error);
+      alert("Failed to like review. Please try again.");
     }
   };
 
@@ -59,23 +90,6 @@ export default function ReviewList({ conferenceId, refreshKey }: ReviewListProps
     return (
       <div className="bg-gray-800 rounded-lg p-6">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-gray-800 rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-white mb-4">Reviews</h2>
-        <div className="text-red-400 p-4 bg-red-900/20 rounded-lg">
-          <p>{error}</p>
-          <button
-            onClick={fetchReviews}
-            className="mt-2 bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded-md"
-          >
-            Try Again
-          </button>
-        </div>
       </div>
     );
   }
@@ -93,10 +107,10 @@ export default function ReviewList({ conferenceId, refreshKey }: ReviewListProps
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
-                    {review.user.name?.charAt(0).toUpperCase() || review.user.email?.charAt(0).toUpperCase() || "U"}
+                    {review.user.name?.charAt(0).toUpperCase() || review.user.email.charAt(0).toUpperCase()}
                   </div>
                   <span className="text-white font-medium">
-                    {review.user.name || review.user.email || "Unknown User"}
+                    {review.user.name || review.user.email}
                   </span>
                 </div>
                 <div className="flex items-center space-x-1">
@@ -110,11 +124,14 @@ export default function ReviewList({ conferenceId, refreshKey }: ReviewListProps
               <p className="text-gray-300 mb-3">{review.content}</p>
 
               <div className="flex items-center space-x-4 text-sm text-gray-400">
-                <button className="hover:text-white transition-colors">
-                  👍 {review.likes?.length || 0}
+                <button
+                  onClick={() => handleLike(review.id)}
+                  className={`hover:text-white transition-colors ${review.userLiked ? 'text-blue-400' : ''}`}
+                >
+                  👍 {review.likes}
                 </button>
                 <button className="hover:text-white transition-colors">
-                  💬 {review.comments?.length || 0}
+                  💬 {review.comments}
                 </button>
               </div>
             </div>

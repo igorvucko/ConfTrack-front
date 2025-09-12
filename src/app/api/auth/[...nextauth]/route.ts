@@ -1,7 +1,8 @@
-import NextAuth from "next-auth";
+
+import NextAuth, { NextAuthOptions, SessionStrategy } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -15,10 +16,11 @@ const handler = NextAuth({
         }
 
         try {
-          const res = await fetch("http://localhost:3001/auth/login", {
-            method: "POST",
+
+          const response = await fetch('http://localhost:3001/auth/login', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               email: credentials.email,
@@ -26,33 +28,17 @@ const handler = NextAuth({
             }),
           });
 
-          if (!res.ok) {
-            console.error('Login failed:', res.status, res.statusText);
+          if (!response.ok) {
             return null;
           }
 
-          const data = await res.json();
+          const data = await response.json();
 
-
-          let userData;
           if (data.user) {
-
-            userData = data.user;
-          } else if (data.id || data.email) {
-
-            userData = data;
-          } else {
-            console.error('Unexpected response structure:', data);
-            return null;
-          }
-
-          if (userData) {
             return {
-              id: userData.id?.toString(),
-              email: userData.email,
-              name: userData.name,
-
-              accessToken: data.accessToken,
+              id: data.user.id.toString(),
+              email: data.user.email,
+              name: data.user.name,
             };
           }
           return null;
@@ -64,7 +50,7 @@ const handler = NextAuth({
     }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as SessionStrategy,
     maxAge: 30 * 24 * 60 * 60,
   },
   pages: {
@@ -76,7 +62,6 @@ const handler = NextAuth({
       if (user) {
         token.id = user.id;
         token.email = user.email;
-        token.accessToken = user.accessToken;
       }
       return token;
     },
@@ -84,11 +69,11 @@ const handler = NextAuth({
       if (session.user) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
-        session.accessToken = token.accessToken as string;
       }
       return session;
     },
   },
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
